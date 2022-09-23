@@ -14,6 +14,19 @@ function operation () {
         if(action === 'Criar conta'){
             criarconta()
         }
+        else if (action === 'depositar'){
+
+        }
+        else if (action === 'consultar saldo'){
+
+        }
+        else if (action === 'sacar'){
+
+        }
+        else if (action === 'sair'){
+            console.log(chalk.bgBlue.black('obrigado por usar nosso banco'))
+            process.exit()
+        }
     }).catch((err) =>console.log(err))
 
 }
