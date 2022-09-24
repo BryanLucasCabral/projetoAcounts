@@ -15,7 +15,7 @@ function operation () {
             criarconta()
         }
         else if (action === 'depositar'){
-
+        depositar()
         }
         else if (action === 'consultar saldo'){
 
@@ -59,4 +59,23 @@ function buildAccount(){
         console.log(chalk.bgGreen('parabens sua conta foi criada'))
         operation()
     }).catch((err) => console.log(err))
+}
+function depositar(){
+    inquirer.prompt([{
+        name:'accountName',
+        message:'qual o nome da conta',
+    },]).then((answers)=>{
+        const accountName = answers['accountName']
+
+        if(!checarconta(accountName)){
+            return depositar()
+        }
+    })
+}
+function checarconta(accountName){
+    if(!fs.existsSync(`accounts/${accountName}.json`)){
+        console.log(chalk.bgRed.black('essa conta não existe!'))
+        return false
+    }
+    return true
 }
