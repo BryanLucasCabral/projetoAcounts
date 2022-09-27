@@ -21,7 +21,7 @@ function operation () {
             consultarSaldo()
         }
         else if (action === 'sacar'){
-
+            sacar()
         }
         else if (action === 'sair'){
             console.log(chalk.bgBlue.black('obrigado por usar nosso banco'))
@@ -133,4 +133,51 @@ function consultarSaldo(){
         console.log(chalk.bgGreen.black(`O valor do seu saldo é R$${accountDATA.balance}`))
         operation()
     }).catch()
+}
+function sacar(){
+    inquirer.prompt([{
+        name:'accountName',
+        message:'qual o nome da sua conta?'
+    }]).then((answers) =>{
+        const accountName = answers['accountName']
+
+        if(!checarconta(accountName)){
+            return sacar()
+        }
+
+    inquirer.prompt([{
+        name:'money',
+        message:'quantos reais você deseja sacar?'
+    }]).then((answers) =>{
+        const money = answers['money']
+
+        removerMoney(accountName, money)
+    }).catch(err => console.log(err))
+    }).catch(err => console.log(err))
+}
+
+function removerMoney(accountName, money){
+    const accountDATA = getaccount(accountName)
+
+    if(!money){
+        console.log('ocorreu um erro!')
+        return sacar()
+    }
+    if(accountDATA.balance < money){
+        console.log('valor indisponivel!')
+        return sacar()
+    }
+
+    accountDATA.balance = parseFloat(accountDATA.balance) - parseFloat(money)
+
+    fs.writeFileSync(
+        `accounts/${accountName}.json`,
+        JSON.stringify(accountDATA),
+        function (err){
+            console.log(err)
+        },
+    )
+
+    console.log(chalk.bgGreen('foi retirado com sucesso'))
+    operation()
 }
