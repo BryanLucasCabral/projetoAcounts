@@ -15,10 +15,10 @@ function operation () {
             criarconta()
         }
         else if (action === 'depositar'){
-        depositar()
+            depositar()
         }
         else if (action === 'consultar saldo'){
-
+            consultarSaldo()
         }
         else if (action === 'sacar'){
 
@@ -116,4 +116,21 @@ function getaccount(accountName){
         flag:'r',
     })
     return JSON.parse(accountJSON)
+}
+function consultarSaldo(){
+    inquirer.prompt([{
+        name: 'saldo',
+        message:'qual o nome da sua conta?',
+    },]).then((answers) =>{
+        const saldo = answers['saldo']
+
+        if(!checarconta(saldo)){
+            return consultarSaldo()
+        }
+
+    const accountDATA = getaccount(saldo)
+
+        console.log(chalk.bgGreen.black(`O valor do seu saldo é R$${accountDATA.balance}`))
+        operation()
+    }).catch()
 }
