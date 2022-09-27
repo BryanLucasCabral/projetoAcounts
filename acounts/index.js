@@ -48,7 +48,7 @@ function buildAccount(){
             fs.mkdirSync('accounts')
         }
         if(fs.existsSync(`accounts/${accountName}.json`)){
-            console.log(chalk.bgRed('esse nome já existe, insira outro.'))
+            console.log(chalk.bgRed( 'esse nome já existe, insira outro.'))
             buildAccount()
             return
         }
@@ -70,7 +70,17 @@ function depositar(){
         if(!checarconta(accountName)){
             return depositar()
         }
-    })
+        
+        inquirer.prompt([{
+            name:'money',
+            message:'insira o valor que deseja depositar:',
+        },]).then((answers) => {
+            const money = answers['money']
+
+            addmoney(accountName, money)
+            operation()
+        }).catch(err => console.log(err))
+    }).catch(err => console.log(err))
 }
 function checarconta(accountName){
     if(!fs.existsSync(`accounts/${accountName}.json`)){
@@ -78,4 +88,32 @@ function checarconta(accountName){
         return false
     }
     return true
+}
+function addmoney(accountName, money){
+    const accountDATA = getaccount(accountName)
+
+    if(!money){
+        console.log(chalk.bgRed.black('algo deu errado, tente novamente!'))
+        return depositar()
+    }
+
+    accountDATA.balance = parseFloat(money) + parseFloat(accountDATA.balance)
+
+    fs.writeFileSync(
+        `accounts/${accountName}.json`,
+        JSON.stringify(accountDATA),
+        function (err){
+            console.log(err)
+        }
+    )
+
+    console.log(chalk.bgGreen(`O valor R$${money} foi depositado em sua conta`))
+}
+
+function getaccount(accountName){
+    const accountJSON = fs.readFileSync(`accounts/${accountName}.json`, {
+        encoding:'utf-8',
+        flag:'r',
+    })
+    return JSON.parse(accountJSON)
 }
